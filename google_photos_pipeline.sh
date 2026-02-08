@@ -116,7 +116,7 @@ done
 echo "Finished HEIC → JPEG conversion at $(date)" | tee -a "$HEIC_LOG"
 
 echo "Syncing into PhotoPrism..." | tee -a "$LOG"
-rsync -av --ignore-existing "$WORK_DIR"/ "$PRISM_ORIG"/ >> "$LOG" 2>&1 || true
+rsync -av --size-only "$WORK_DIR"/ "$PRISM_ORIG"/ >> "$LOG" 2>&1 || true
 
 echo "Building yearly archives..." | tee -a "$LOG"
 
