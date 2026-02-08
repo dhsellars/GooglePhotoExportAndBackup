@@ -115,8 +115,8 @@ done
 
 echo "Finished HEIC → JPEG conversion at $(date)" | tee -a "$HEIC_LOG"
 
-echo "Syncing into PhotoPrism..." | tee -a "$LOG"
-rsync -av --size-only "$WORK_DIR"/ "$PRISM_ORIG"/ >> "$LOG" 2>&1 || true
+echo "Copying into PhotoPrism originals..." | tee -a "$LOG"
+cp -av "$WORK_DIR"/ "$PRISM_ORIG"/ | tee -a "$LOG"
 
 echo "Building yearly archives..." | tee -a "$LOG"
 
@@ -129,12 +129,7 @@ find "$WORK_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.mp4" -
 done
 
 echo "Mirroring archives..." | tee -a "$LOG"
-rsync -av "$ARCHIVE_DIR"/ "$MIRROR1"/ >> "$LOG" 2>&1 || true
-rsync -av "$ARCHIVE_DIR"/ "$MIRROR2"/ >> "$LOG" 2>&1 || true
-
-echo "Cleaning up..." | tee -a "$LOG"
-rm -f "$SRC_ZIPS"/*.zip
-rm -rf "$WORK_DIR"/*
-rm -rf "$HEIC_STAGE"/*
+cp -av "$ARCHIVE_DIR"/ "$MIRROR1"/ | tee -a "$LOG"
+cp -av "$ARCHIVE_DIR"/ "$MIRROR2"/ | tee -a "$LOG"
 
 echo "=== Completed successfully: $(date) ===" | tee -a "$LOG"
