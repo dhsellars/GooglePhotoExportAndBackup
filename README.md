@@ -1,91 +1,65 @@
 
-
-## 📘 Google Photos → PhotoPrism Import & Archiving Tool
-
-This tool automates the full pipeline of processing Google Takeout photo exports and preparing them for long‑term storage and PhotoPrism ingestion. It handles extraction, HEIC conversion, organization, archiving, and cleanup with minimal user intervention.
-
 ---
 
-## 🚀 What the tool does
+## 🔧 What the tool does
 
-### 1. **Extracts Google Takeout ZIP files**
-All ZIP files in the configured source directory are unpacked.  
-Nested ZIPs inside the export are also detected and extracted automatically.
+### Extraction  
+All ZIP files from Google Takeout are unpacked into a working directory. Nested ZIPs inside the export are also detected and extracted automatically.
 
-### 2. **Stages HEIC files**
-All `.HEIC` images are moved into a dedicated `_original_heic` folder.  
-This ensures clean separation between originals and converted files.
+### HEIC staging and conversion  
+HEIC files are moved into a dedicated staging folder.  
+Each HEIC is converted to JPEG using ImageMagick, and the JPEGs are placed back into the working directory.
 
-### 3. **Converts HEIC → JPEG**
-Uses ImageMagick to convert each HEIC file into a JPEG placed in the working directory.  
-Existing JPEGs are skipped to avoid duplicate work.
+### Import into PhotoPrism  
+All processed files in the working directory are copied into your PhotoPrism `originals` directory using a verbose copy so you can see each file as it transfers.
 
-### 4. **Syncs processed files into PhotoPrism**
-All new media files are copied into the PhotoPrism `originals` directory.
-
-### 5. **Creates yearly ZIP archives**
+### Yearly archives  
 Each media file is assigned a year using:
-- EXIF `DateTimeOriginal`  
-- Google Takeout JSON metadata  
+- EXIF `DateTimeOriginal`
+- Google Takeout JSON metadata
 - File modification time (fallback)
 
 Files are added to a `YYYY_Photos.zip` archive for long‑term storage.
 
-### 6. **Mirrors archives to additional locations**
-Two optional mirror directories can be used for redundancy.
-
-### 7. **Cleans up temporary files**
-After successful processing, the working directory and staging folder are cleared.
+### Mirroring  
+Yearly archives are copied to two optional mirror locations for redundancy.
 
 ---
 
-## ⚙️ Interactive setup (first run)
+## ⚙️ Interactive setup
 
-When the script is run for the first time, it launches a guided setup that asks the user to confirm or override the default directories:
+On the first run, the script asks you to confirm or override default paths:
 
-- Location of Google Takeout ZIP files  
-- Working directory for extraction and conversion  
+- Google Takeout ZIP directory  
+- Working directory  
 - PhotoPrism originals directory  
 - Yearly archive directory  
-- Optional mirror directories  
+- Mirror directories  
 - HEIC conversion log location  
 
-Each prompt shows a default value. Pressing **Enter** accepts the default.
+Press **Enter** to accept any default.
 
-Example:
-
-```
-Path to ZIP files [/mnt/z/GooglePhotoExportZips]:
-```
-
-If the user presses Enter, the default is used.  
-If they type a new path, that becomes the new setting.
-
-### Configuration file
-
-After setup, the script writes a config file:
+Your choices are saved to:
 
 ```
 ~/.google_photos_pipeline.conf
 ```
 
-This file stores all chosen paths and is automatically loaded on every future run.
+Future runs load this automatically.
 
-### Changing settings later
-
-To update paths, simply delete the config file:
+To reset the configuration:
 
 ```
 rm ~/.google_photos_pipeline.conf
 ```
 
-The script will run the interactive setup again on the next launch.
+The script will prompt you again on the next run.
 
 ---
 
 ## ▶️ Running the tool
 
-Once configured, running the script is as simple as:
+Run the script directly:
 
 ```
 ./google_photos_pipeline.sh
@@ -93,13 +67,12 @@ Once configured, running the script is as simple as:
 
 The script will:
 
-- Load your saved configuration  
-- Process any new ZIP files  
-- Convert HEICs  
-- Update PhotoPrism  
-- Update yearly archives  
-- Mirror archives  
-- Clean up  
+- extract ZIPs  
+- convert HEICs  
+- copy files into PhotoPrism  
+- build yearly archives  
+- mirror archives  
 
-No further interaction is required unless you want to change your settings.
+No cleanup is performed, so you can inspect the working directory after each run.
 
+---
